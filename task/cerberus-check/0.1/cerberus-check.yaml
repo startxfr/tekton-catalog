@@ -4,7 +4,6 @@ kind: Task
 apiVersion: tekton.dev/v1beta1
 metadata:
   name: cerberus-check
-  namespace: "{{- $namespace -}}"
   labels:
     app.kubernetes.io/name: "cerberus-check-task"
     tool: cerberus
