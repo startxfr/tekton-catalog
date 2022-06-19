@@ -5,14 +5,15 @@ apiVersion: tekton.dev/v1beta1
 metadata:
   name: cerberus-check
   labels:
+    app.kubernetes.io/version: "0.1"
     app.kubernetes.io/name: "cerberus-check-task"
     tool: cerberus
   annotations:
     tekton.dev/categories: Test
-    tekton.dev/displayName: Execute a cerberus check
-    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/displayName: cerberus-check
+    tekton.dev/pipelines.minVersion: "0.12.1"
     tekton.dev/platforms: linux/amd64
-    tekton.dev/tags: cerberus,chaos,test
+    tekton.dev/tags: cerberus, chaos, test
 spec:
   description: >-
     The cerberus-check `task`` execute periodic check of a cerberus server and return

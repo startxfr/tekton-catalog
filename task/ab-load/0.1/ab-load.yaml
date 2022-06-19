@@ -4,14 +4,15 @@ apiVersion: tekton.dev/v1beta1
 metadata:
   name: ab-load
   labels:
+    app.kubernetes.io/version: "0.1"
     app.kubernetes.io/name: "ab-load-task"
-    tool: apache-benchmark
+    tool: ab
   annotations:
     tekton.dev/categories: Test
-    tekton.dev/displayName: Start a Apache benchmark http load test
-    tekton.dev/pipelines.minVersion: 0.12.1
+    tekton.dev/displayName: apache-benchmark-load
+    tekton.dev/pipelines.minVersion: "0.12.1"
     tekton.dev/platforms: linux/amd64
-    tekton.dev/tags: ab,http,load,test
+    tekton.dev/tags: ab, http, load, test
 spec:
   description: >-
     This `task` can be used to start an http load test as part of an application test pipeline.
