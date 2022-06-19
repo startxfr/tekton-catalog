@@ -77,7 +77,7 @@ data:
         enable_alerts: False
         alert_profile: common/default_alerts.yaml
     tunings:
-        wait_duration: 600
+        wait_duration: 45
         iterations: 1
         daemon_mode: False
 ---
@@ -148,17 +148,11 @@ spec:
       type: string
       description: Name of the secret key holding the aws-credentials (mandatory but used only for aws infrastructure chaos test).
       default: kraken-aws-creds
-    - name: serviceAccount
-      type: string
-      description: Name of the serviceAccount running the kraken task.
-      default: kraken
   tasks:
   - name: kraken-scenario
     params:
       - name: awsCredentialSecret
         value: $(params.awsCredentialSecret)
-      - name: serviceAccount
-        value: $(params.serviceAccount)
     taskRef:
       kind: Task
       name: kraken-scenario
@@ -188,8 +182,6 @@ spec:
   params:
     - name: awsCredentialSecret
       value: "kraken-aws-creds"
-    - name: serviceAccount
-      value: "kraken"
   pipelineRef:
     name: kraken-scenario-example
   workspaces:

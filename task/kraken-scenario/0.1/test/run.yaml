@@ -77,7 +77,7 @@ data:
         enable_alerts: False
         alert_profile: common/default_alerts.yaml
     tunings:
-        wait_duration: 600
+        wait_duration: 45
         iterations: 1
         daemon_mode: False
 ---
@@ -148,8 +148,6 @@ spec:
   params:
     - name: awsCredentialSecret
       value: "kraken-aws-creds"
-    - name: serviceAccount
-      value: "kraken"
   workspaces:
   - name: kraken-kubeconfig
     configMap:
