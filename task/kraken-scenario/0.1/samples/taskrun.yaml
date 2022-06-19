@@ -59,7 +59,7 @@ data:
       litmus_uninstall_before_run: False
       chaos_scenarios:
         - pod_scenarios:
-          - - config/default_pod_scenario.yml
+          - - common/default_pod_scenario.yml
     cerberus:
         cerberus_enabled: True
         cerberus_url: "http://cerberus.chaos-cerberus.svc.cluster.local:8080"
@@ -69,17 +69,25 @@ data:
         repo: "https://github.com/cloud-bulldozer/performance-dashboards.git"
         kube_burner_binary_url: "https://github.com/cloud-bulldozer/kube-burner/releases/download/v0.9.1/kube-burner-0.9.1-Linux-x86_64.tar.gz"
         capture_metrics: True
-        config_path: config/default_kubeburner.yaml
-        metrics_profile_path: config/default_metrics.yaml
+        config_path: common/default_kubeburner.yaml
+        metrics_profile_path: common/default_metrics.yaml
         prometheus_url:
         prometheus_bearer_token:
         uuid:
         enable_alerts: False
-        alert_profile: config/default_alerts.yaml
+        alert_profile: common/default_alerts.yaml
     tunings:
         wait_duration: 600
         iterations: 1
         daemon_mode: False
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kraken-common-example
+  labels:
+    app.kubernetes.io/name: "kraken-common-example"
+data:
   default_kubeburner.yaml: |-
     ---
     global:
@@ -149,3 +157,6 @@ spec:
   - name: kraken-config
     configMap:
       name: kraken-config-example
+  - name: kraken-common
+    configMap:
+      name: kraken-common-example

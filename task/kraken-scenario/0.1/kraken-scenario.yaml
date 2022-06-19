@@ -51,8 +51,11 @@ spec:
       description: The kubeconfig configuration file of the targeted cluster
       mountPath: /root/.kube
     - name: kraken-config
-      description: The kraken configuration file of chaos scenario to run
+      description: The kraken configuration file defining the chaos scenario to run
       mountPath: /root/kraken/config
+    - name: kraken-common
+      description: The kraken common configuration files related to the chaos configuration
+      mountPath: /root/kraken/common
   results:
     - name: report
       description: The final report of the chaos test
