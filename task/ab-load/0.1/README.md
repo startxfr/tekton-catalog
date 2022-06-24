@@ -1,61 +1,82 @@
-# STARTX
+# AB-load
 
-## AB-load
+The ab-load task execute an http/https load test again't a targeted endpoint using the Apache benchmark toolkit.
 
-The ab-load task execute a chaos test against a cluster and return a OK if test is positive.
-
-### Install the AB-load task
+## Install the AB-load task
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/startxfr/tekton-catalog/main/task/ab-load/0.1/ab-load.yaml
 ```
 
-### Parameters
+## Parameters
 
-| Key                 | Default            | Description                                                                                                     |
-| ------------------- | ------------------ | --------------------------------------------------------------------------------------------------------------- |
-| awsCredentialSecret | `kraken-aws-creds` | Name of the secret key holding the aws-credentials (mandatory but used only for aws infrastructure chaos test). |
-| serviceAccount      | `kraken`           | Name of the serviceAccount running the kraken task.                                                             |
+| Key              | Default                              | Description                                                                                         |
+| ---------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| url              | `http://myapp.target_cluster.local/` | The URL targeted by the load test (must end with / if root domain is targeted)                      |
+| method           | `GET`                                | The HTTP method name                                                                                |
+| type             | `application/x-www-form-urlencoded`  | The http type of payload sended to the target endpoint (for POST and PUT method)                    |
+| size             | `1000`                               | Number of requests to perform                                                                       |
+| concurrency      | `10`                                 | Number of concurent requests to execute                                                             |
+| timeout          | `5`                                  | Seconds to wait for each response before ending up the connection and considering it's a bad answer |
+| additionnalFlags | `-k -I`                              | All ab command supported flag (ex: -k for keepalive or -I for insecure https connection)            |
 
-### Workspaces
+## Workspaces
 
-| Key               | Mount                 | Description                                                                                                       |
-| ----------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| kraken-kubeconfig | `/root/.kube`         | The kubeconfig configuration file of the targeted cluster. Must be in a `config` key if from configMap or Secret. |
-| kraken-config     | `/root/kraken/config` | The kraken configuration file defining the chaos scenario to run                                                  |
-| kraken-common     | `/root/kraken/common` | The kraken common configuration files related to the chaos configuration                                          |
+| Key          | Mount         | Description                                                                                                                                                                                                   |
+| ------------ | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| body-content | `/root/.kube` | Data to send to the endpoint must have a `content` key with content ready to send to the endpoint. Could be from a `configMap`, a `secret` or a `persistentVolumeClaim` as soon as they have a `content` key. |
 
 ## Platforms
 
 The Task can be run on `linux/amd64` platform.
 
-### Usage
+## Usage
 
-This task should be run with a pre-existing context composed of various `secret` and `configMap` resources. 
-You better check the [samples files](https://github.com/startxfr/tekton-catalog/tree/main/task/ab-load/0.1/samples) 
-instead of using this example _as if_.
+Theses examples use a default configuration set to :
+
+- Execute `1000` requests for each test, with
+- `10` concurrency request are executed a the same time
+- requests timeout after `5` seconds 
+- Connection use http keepalive session
+- insecure connection are ignored
+
+### Simple Http GET example
+
 
 ```yaml
 apiVersion: tekton.dev/v1beta1
 kind: TaskRun
 metadata:
-  name: ab-load-test
+  name: ab-load-get-example-run
 spec:
   taskRef:
     name: ab-load
   params:
-    - name: awsCredentialSecret
-      value: "kraken-aws-creds"
-    - name: serviceAccount
-      value: "kraken"
+    - name: url
+      value: "https://startx.free.beeceptor.com/"
+```
+
+
+### Simple Http POST example
+
+If you plan to target a POST endpoint, you should create an `ab-load-post-example` configMap ([example](https://github.com/startxfr/tekton-catalog/tree/main/task/ab-load/0.1/samples/ab-load-post-example.yaml)) prior to executing your ab POST load test.
+
+
+```yaml
+apiVersion: tekton.dev/v1beta1
+kind: TaskRun
+metadata:
+  name: ab-load-post-example-run
+spec:
+  taskRef:
+    name: ab-load
+  params:
+    - name: url
+      value: "https://startx.free.beeceptor.com/"
+    - name: method
+      value: POST
   workspaces:
-  - name: kraken-kubeconfig
+  - name: body-content
     configMap:
-      name: kraken-kubeconfig
-  - name: kraken-config
-    configMap:
-      name: kraken-config-test
-  - name: kraken-common
-    configMap:
-      name: kraken-common-test
+      name: ab-load-post-example
 ```

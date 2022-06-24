@@ -44,8 +44,12 @@ spec:
       type: string
       description: "All ab command supported flag (ex: -k for keepalive)"
       default: "-k -I"
+    - name: type
+      type: string
+      description: "The http type of payload sended to the target endpoint"
+      default: "application/x-www-form-urlencoded"
   steps:
-    - image: quay.io/startx/apache:latest
+    - image: quay.io/startx/apache:fc35
       command: ["/bin/bash", "-c"]
       args: 
         - |-
@@ -67,7 +71,7 @@ spec:
           # execute the AB benchmark for POST load
           function abPOST {
             local file=${AB_FILE}
-            local type=${AB_TYPE}
+            local type=${AB_TYPE:-application/x-www-form-urlencoded}
             local url=${1:-myurl}
             local size=${2:-1000}
             local concurrency=${3:-10}
@@ -87,7 +91,7 @@ spec:
           # execute the AB benchmark for PUT load
           function abPUT {
             local file=${AB_FILE}
-            local type=${AB_TYPE}
+            local type=${AB_TYPE:-application/x-www-form-urlencoded}
             local url=${1:-myurl}
             local size=${2:-1000}
             local concurrency=${3:-10}
@@ -134,7 +138,7 @@ spec:
           value: $(params.url)
         - name: AB_SIZE
           value: $(params.size)
-        - name: AB_SIZE
+        - name: AB_CONCURRENCY
           value: $(params.concurrency)
         - name: AB_TIMEOUT
           value: $(params.timeout)
@@ -145,13 +149,13 @@ spec:
         - name: AB_FILE
           value: /tmp/postfile/content
         - name: AB_TYPE
-          value: application/x-www-form-urlencoded
+          value: $(params.type)
       resources: {}
   workspaces:
     - name: body-content
       description: >-
         Data to send to the endpoint must have a `content` key with content ready to send to the endpoint. 
-        Could be from a `configMap`, a `secret` or a `persistentVolumeClaim` as souon as they hold a `content` file.
+        Could be from a `configMap`, a `secret` or a `persistentVolumeClaim` as soon as they have a `content` key.
       mountPath: /tmp/postfile
       optional: true
   results:
