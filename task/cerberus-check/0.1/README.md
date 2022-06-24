@@ -1,16 +1,14 @@
-# STARTX
-
 ## Cerberus-check
 
 The cerberus-check task execute periodic check of a cerberus server and return a OK when cerberus signal is positive.
 
-### Install the Cerberus-check task
+## Install the Cerberus-check task
 
 ```
 kubectl apply -f https://raw.githubusercontent.com/startxfr/tekton-catalog/main/task/cerberus-check/0.1/cerberus-check.yaml
 ```
 
-### Parameters
+## Parameters
 
 | Key             | Default                | Description                                                                        |
 | --------------- | ---------------------- | ---------------------------------------------------------------------------------- |
@@ -18,7 +16,7 @@ kubectl apply -f https://raw.githubusercontent.com/startxfr/tekton-catalog/main/
 | timeout         | `60`                   | Timeout for the healthcheck performed against the cerberus server                  |
 | frequency       | `10`                   | Frequency of the healthcheck in case of bad pulse                                  |
 
-### Workspaces
+## Workspaces
 
 _This task require no workspace_
 
@@ -26,7 +24,7 @@ _This task require no workspace_
 
 The Task can be run on `linux/amd64` platform.
 
-### Usage
+## Usage
 
 ```yaml
 apiVersion: tekton.dev/v1beta1

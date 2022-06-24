@@ -1,4 +1,3 @@
-
 ---
 kind: Task
 apiVersion: tekton.dev/v1beta1
@@ -9,7 +8,7 @@ metadata:
     app.kubernetes.io/name: "cerberus-check-task"
     tool: cerberus
   annotations:
-    tekton.dev/categories: Test
+    tekton.dev/categories: Testing
     tekton.dev/displayName: cerberus-check
     tekton.dev/pipelines.minVersion: "0.12.1"
     tekton.dev/platforms: linux/amd64
@@ -35,7 +34,7 @@ spec:
       description: Frequency of the healthcheck in case of bad pulse
       default: "10"
   steps:
-    - image: "quay.io/startx/fedora:latest"
+    - image: "quay.io/startx/fedora:35"
       env:
         - name: CERBERUS_URL
           value: $(params.cerberus_server)
@@ -48,12 +47,11 @@ spec:
         set -ex
 
         function checkCerberus {
-          curl -s $1 | grep True &> /dev/null
-          if [[ "$?" == "0" ]]; then
-              echo "Cerberus check is OK at $1"
+          if curl -s "$1" | grep True &> /dev/null; then
+              echo "Cerberus check is OK at ${1}"
               return 0
          else
-              echo "Cerberus check is KO at $1"
+              echo "Cerberus check is KO at ${1}"
               return 1
           fi
         }
@@ -63,14 +61,14 @@ spec:
           step=0
           increment=${3:-5}
           url=${1:-localhost}
-          while [ $step -le $timeout ]
+          while [ "$step" -le "$timeout" ]
           do
-            checkCerberus $url
-            if [[ "$?" == "0" ]]; then
+            
+            if checkCerberus "$url"; then
               exit 0;
             fi
-            step=$(( $step + $increment ))
-            sleep $increment
+            step=$(( step + increment ))
+            sleep "$increment"
           done
           echo "Cerberus check reach ${timeout}s timeout limit"
         }
